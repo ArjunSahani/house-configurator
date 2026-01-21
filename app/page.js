@@ -1,66 +1,88 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import { useState, useEffect } from "react";
 
 export default function Home() {
+  const ROOFS = ["flat", "gable", "slope"];
+  const COLORS = ["Beige", "Black", "Blue", "White"];
+  const MATERIALS = ["Farmhouse", "Shingles", "Siding", "Stucco"];
+
+  const [roof, setRoof] = useState("flat");
+  const [color, setColor] = useState("Beige");
+  const [material, setMaterial] = useState("Farmhouse");
+  const [fade, setFade] = useState(true);
+
+  const imageUrl = `/roofs/${roof}/${capitalize(roof)}-${color}-${material}.jpg`;
+
+  // Trigger fade on change
+  useEffect(() => {
+    setFade(false);
+    const timer = setTimeout(() => setFade(true), 150);
+    return () => clearTimeout(timer);
+  }, [roof, color, material]);
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="app">
+      {/* PREVIEW */}
+      <div className="preview">
+        <img
+          src={imageUrl}
+          className={`houseImage ${fade ? "fade-in" : "fade-out"}`}
+          alt="House preview"
         />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.js file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
+      </div>
+
+      {/* CONTROLS */}
+      <div className="controls">
+        <Section title="Roof Type">
+          {ROOFS.map((r) => (
+            <Button key={r} active={roof === r} onClick={() => setRoof(r)}>
+              {r}
+            </Button>
+          ))}
+        </Section>
+
+        <Section title="Color">
+          {COLORS.map((c) => (
+            <Button key={c} active={color === c} onClick={() => setColor(c)}>
+              {c}
+            </Button>
+          ))}
+        </Section>
+
+        <Section title="Material">
+          {MATERIALS.map((m) => (
+            <Button
+              key={m}
+              active={material === m}
+              onClick={() => setMaterial(m)}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+              {m}
+            </Button>
+          ))}
+        </Section>
+      </div>
     </div>
+  );
+}
+
+function capitalize(word) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+function Section({ title, children }) {
+  return (
+    <section>
+      <h2>{title}</h2>
+      <div className="row">{children}</div>
+    </section>
+  );
+}
+
+function Button({ children, active, ...props }) {
+  return (
+    <button className={active ? "active" : ""} {...props}>
+      {children}
+    </button>
   );
 }
