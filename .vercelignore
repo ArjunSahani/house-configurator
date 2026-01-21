@@ -1,0 +1,8 @@
+node_modules
+*.log
+.next
+.git
+*.md
+*.txt
+.vscode
+.idea
