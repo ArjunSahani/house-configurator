@@ -10,96 +10,56 @@ export default function Home() {
   ];
 
   const COLORS = [
-    { id: "Beige", hex: "#F5F5DC" },
-    { id: "Black", hex: "#2C2C2C" },
-    { id: "Blue", hex: "#4169E1" },
-    { id: "White", hex: "#FFFFFF" }
+    { id: "beige", label: "Beige", hex: "#F5F5DC" },
+    { id: "black", label: "Black", hex: "#2C2C2C" },
+    { id: "blue", label: "Blue", hex: "#4169E1" },
+    { id: "white", label: "White", hex: "#FFFFFF" }
   ];
 
   const MATERIALS = [
-    { id: "Farmhouse", label: "Farmhouse", icon: "/icons/farm.svg" },
-    { id: "Shingles", label: "Shingles", icon: "/icons/shingle.svg" },
-    { id: "Siding", label: "Siding", icon: "/icons/siding.svg" },
-    { id: "Stucco", label: "Stucco", icon: "/icons/stucco.svg" }
+    { id: "farmhouse", label: "Farmhouse", icon: "/icons/farm.svg" },
+    { id: "shingles", label: "Shingles", icon: "/icons/shingle.svg" },
+    { id: "siding", label: "Siding", icon: "/icons/siding.svg" },
+    { id: "stucco", label: "Stucco", icon: "/icons/stucco.svg" }
   ];
 
   const [roof, setRoof] = useState("flat");
-  const [color, setColor] = useState("Beige");
-  const [material, setMaterial] = useState("Farmhouse");
-  const [currentImage, setCurrentImage] = useState("/placeholder.webp");
+  const [color, setColor] = useState("beige");
+  const [material, setMaterial] = useState("farmhouse");
+  const [currentImage, setCurrentImage] = useState("/placeholder.jpg");
   const [isVisible, setIsVisible] = useState(true);
+
   const timeoutRef = useRef(null);
 
-  // Build image URL - IMPORTANT: Match your actual file names
-  const getImageUrl = () => {
-    // Try different formats based on how you named your files
-    const baseUrl = `/roofs/${roof}`;
-    const fileName = `${roof}-${color}-${material}.webp`;
-    
-    // Common variations to try:
-    // 1. Original: flat-Beige-Farmhouse.webp
-    // 2. Lowercase: flat-beige-farmhouse.webp
-    // 3. Without dashes: flatBeigeFarmhouse.webp
-    
-    return `${baseUrl}/${fileName}`;
-  };
+  const getImageUrl = () =>
+    `/roofs/${roof}/${roof}-${color}-${material}.jpg`;
 
   useEffect(() => {
-    // Start fade out
     setIsVisible(false);
-    
+
     const imageUrl = getImageUrl();
-    
-    // Clear any existing timeout
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    
-    // Preload the image
     const img = new Image();
     img.src = imageUrl;
-    
+
     img.onload = () => {
-      console.log("Image loaded successfully:", imageUrl);
       timeoutRef.current = setTimeout(() => {
         setCurrentImage(imageUrl);
         setIsVisible(true);
-      }, 50);
+      }, 40);
     };
-    
+
     img.onerror = () => {
-      console.error("Failed to load image:", imageUrl);
-      
-      // Try alternative naming if fails
-      const altImageUrl = `/roofs/${roof}/${roof}-${color.toLowerCase()}-${material.toLowerCase()}.webp`;
-      console.log("Trying alternative:", altImageUrl);
-      
-      const altImg = new Image();
-      altImg.src = altImageUrl;
-      
-      altImg.onload = () => {
-        setCurrentImage(altImageUrl);
-        setIsVisible(true);
-      };
-      
-      altImg.onerror = () => {
-        // Final fallback
-        setCurrentImage("/placeholder.webp");
-        setIsVisible(true);
-      };
+      setCurrentImage("/placeholder.jpg");
+      setIsVisible(true);
     };
-    
-    // Cleanup
+
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      img.onload = null;
-      img.onerror = null;
     };
   }, [roof, color, material]);
 
   return (
     <main className="app">
-      {/* PREVIEW */}
       <div className="preview">
         <div className="image-container">
           <img
@@ -107,19 +67,16 @@ export default function Home() {
             alt={`${roof} roof, ${color} color, ${material} material house`}
             className={`houseImage ${isVisible ? "loaded" : ""}`}
             onError={(e) => {
-              console.error("Image error in render:", e.currentTarget.src);
-              e.currentTarget.src = "/placeholder.webp";
+              e.currentTarget.src = "/placeholder.jpg";
               setIsVisible(true);
             }}
           />
         </div>
       </div>
 
-      {/* CONTROLS */}
       <div className="controls">
         <div className="controls-container">
 
-          {/* ROOF */}
           <Section title="Roof Type">
             {ROOFS.map((r) => (
               <IconButton
@@ -132,12 +89,11 @@ export default function Home() {
             ))}
           </Section>
 
-          {/* COLOR */}
           <Section title="Color">
             {COLORS.map((c) => (
               <ColorButton
                 key={c.id}
-                label={c.id}
+                label={c.label}
                 hex={c.hex}
                 active={color === c.id}
                 onClick={() => setColor(c.id)}
@@ -145,7 +101,6 @@ export default function Home() {
             ))}
           </Section>
 
-          {/* MATERIAL */}
           <Section title="Material">
             {MATERIALS.map((m) => (
               <IconButton
@@ -164,7 +119,8 @@ export default function Home() {
   );
 }
 
-/* ========== HELPERS ========== */
+/* ================= HELPERS ================= */
+
 function Section({ title, children }) {
   return (
     <section className="control-section">
@@ -175,18 +131,6 @@ function Section({ title, children }) {
 }
 
 function IconButton({ icon, label, active, ...props }) {
-  const [svg, setSvg] = useState("");
-
-  useEffect(() => {
-    fetch(icon)
-      .then((res) => res.text())
-      .then((data) => setSvg(data))
-      .catch((err) => {
-        console.error("Failed to load icon:", icon, err);
-        setSvg("");
-      });
-  }, [icon]);
-
   return (
     <button
       className={`custom-button ${active ? "active" : ""}`}
@@ -194,10 +138,7 @@ function IconButton({ icon, label, active, ...props }) {
       {...props}
     >
       <div className="button-content">
-        <div
-          className="icon-container"
-          dangerouslySetInnerHTML={{ __html: svg }}
-        />
+        <img src={icon} alt="" className="icon-container" aria-hidden />
         <span className="label">{label}</span>
       </div>
     </button>
