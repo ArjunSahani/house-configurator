@@ -26,13 +26,17 @@ export default function Home() {
   const [roof, setRoof] = useState("flat");
   const [color, setColor] = useState("beige");
   const [material, setMaterial] = useState("farmhouse");
-  const [currentImage, setCurrentImage] = useState("/placeholder.jpg");
+  const [currentImage, setCurrentImage] = useState("/placeholder.webp");
   const [isVisible, setIsVisible] = useState(true);
 
   const timeoutRef = useRef(null);
 
   const getImageUrl = () =>
-    `/roofs/${roof}/${roof}-${color}-${material}.jpg`;
+    `/roofs/${roof}/${roof}-${color}-${material}.webp`;
+
+
+
+
 
   useEffect(() => {
     setIsVisible(false);
@@ -49,7 +53,7 @@ export default function Home() {
     };
 
     img.onerror = () => {
-      setCurrentImage("/placeholder.jpg");
+      setCurrentImage("/placeholder.webp");
       setIsVisible(true);
     };
 
@@ -67,7 +71,7 @@ export default function Home() {
             alt={`${roof} roof, ${color} color, ${material} material house`}
             className={`houseImage ${isVisible ? "loaded" : ""}`}
             onError={(e) => {
-              e.currentTarget.src = "/placeholder.jpg";
+              e.currentTarget.src = "/placeholder.webp";
               setIsVisible(true);
             }}
           />
