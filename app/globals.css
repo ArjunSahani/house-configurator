@@ -58,11 +58,16 @@ body {
 }
 
 .image-container {
+  position: relative;
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--surface);
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
 }
 
 .houseImage {
@@ -72,35 +77,17 @@ body {
   object-fit: contain;
   background: var(--surface);
   border-radius: 10px;
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
-
   opacity: 0;
-  transform: scale(0.985);
-  transition: opacity 0.35s ease, transform 0.35s ease, filter 0.35s ease;
+  filter: blur(8px);
+  transform: scale(0.98);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, transform, filter;
 }
 
 .houseImage.loaded {
   opacity: 1;
   transform: scale(1);
   filter: blur(0);
-}
-
-
-/* smooth animation class */
-.houseImage.smooth {
-  opacity: 0;
-  transform: scale(0.985);
-  filter: blur(4px);
-  animation: imageFade 0.45s ease-out forwards;
-}
-
-@keyframes imageFade {
-  to {
-    opacity: 1;
-    transform: scale(1);
-    filter: blur(0);
-  }
 }
 
 /* ============================= */
@@ -127,6 +114,7 @@ h2 {
   text-transform: uppercase;
   letter-spacing: 0.4px;
   color: var(--text-secondary);
+  margin: 0 0 0.5rem 0;
 }
 
 /* ============================= */
@@ -138,6 +126,7 @@ h2 {
   padding: 0.6rem 0.25rem; /* safe touch padding */
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .row::-webkit-scrollbar {
@@ -171,12 +160,18 @@ h2 {
 
 .custom-button:hover {
   background: var(--surface);
+  transform: translateY(-1px);
 }
 
 .custom-button.active {
   background: var(--white);
   border-color: var(--accent-color);
   box-shadow: var(--shadow-md);
+}
+
+.custom-button:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
 }
 
 /* ============================= */
@@ -318,7 +313,7 @@ h2 {
   }
 
   .houseImage {
-    background: #181818;
+    background: var(--surface);
     box-shadow: none;
   }
 }

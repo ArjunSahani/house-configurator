@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
+import { useState, useEffect, useRef } from "react";
 
 export default function Home() {
   const ROOFS = [
@@ -27,9 +26,56 @@ export default function Home() {
   const [roof, setRoof] = useState("flat");
   const [color, setColor] = useState("Beige");
   const [material, setMaterial] = useState("Farmhouse");
-  const [loaded, setLoaded] = useState(false);
+  const [currentImage, setCurrentImage] = useState("/placeholder.webp");
+  const [isVisible, setIsVisible] = useState(false);
+  const timeoutRef = useRef(null);
 
-  const imageUrl = `/roofs/${roof}/${roof}-${color}-${material}.webp`;
+  // Preload images for current selection
+  useEffect(() => {
+    // Start fade out
+    setIsVisible(false);
+    
+    const imageUrl = `/roofs/${roof}/${roof}-${color}-${material}.webp`;
+    
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    
+    // Preload the image
+    const img = new Image();
+    img.src = imageUrl;
+    
+    img.onload = () => {
+      // Small delay for smooth transition
+      timeoutRef.current = setTimeout(() => {
+        setCurrentImage(imageUrl);
+        setIsVisible(true);
+      }, 50);
+    };
+    
+    img.onerror = () => {
+      console.error("Failed to load image:", imageUrl);
+      setCurrentImage("/placeholder.webp");
+      setIsVisible(true);
+    };
+    
+    // Cleanup
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [roof, color, material]);
+
+  // Set initial image visible
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <main className="app">
@@ -37,11 +83,9 @@ export default function Home() {
       <div className="preview">
         <div className="image-container">
           <img
-            src={imageUrl}
-            alt="House Preview"
-            className={`houseImage ${loaded ? "loaded" : ""}`}
-            onLoad={() => setLoaded(true)}
-            onError={(e) => (e.currentTarget.src = "/placeholder.webp")}
+            src={currentImage}
+            alt={`${roof} roof, ${color} color, ${material} material house`}
+            className={`houseImage ${isVisible ? "loaded" : ""}`}
           />
         </div>
       </div>
@@ -58,7 +102,7 @@ export default function Home() {
                 icon={r.icon}
                 label={r.label}
                 active={roof === r.id}
-                onClick={() => { setLoaded(false); setRoof(r.id); }}
+                onClick={() => setRoof(r.id)}
               />
             ))}
           </Section>
@@ -71,7 +115,7 @@ export default function Home() {
                 label={c.id}
                 hex={c.hex}
                 active={color === c.id}
-                onClick={() => { setLoaded(false); setColor(c.id); }}
+                onClick={() => setColor(c.id)}
               />
             ))}
           </Section>
@@ -84,7 +128,7 @@ export default function Home() {
                 icon={m.icon}
                 label={m.label}
                 active={material === m.id}
-                onClick={() => { setLoaded(false); setMaterial(m.id); }}
+                onClick={() => setMaterial(m.id)}
               />
             ))}
           </Section>
