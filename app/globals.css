@@ -74,6 +74,25 @@ body {
   border-radius: 10px;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
+
+  /* smooth transitions */
+  transition: opacity 0.35s ease, transform 0.35s ease, filter 0.35s ease;
+}
+
+/* smooth animation class */
+.houseImage.smooth {
+  opacity: 0;
+  transform: scale(0.985);
+  filter: blur(4px);
+  animation: imageFade 0.45s ease-out forwards;
+}
+
+@keyframes imageFade {
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
 }
 
 /* ============================= */
@@ -105,13 +124,11 @@ h2 {
 
 /* ============================= */
 /* ROW */
-/* ============================= */
-
 .row {
   display: flex;
   gap: 0.6rem;
   overflow-x: auto;
-  padding: 0.5rem 0.25rem; /* ✅ safe touch padding */
+  padding: 0.6rem 0.25rem; /* safe touch padding */
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
 }
@@ -122,8 +139,6 @@ h2 {
 
 /* ============================= */
 /* BUTTONS */
-/* ============================= */
-
 .custom-button {
   width: 94px;
   height: 76px;
@@ -143,7 +158,8 @@ h2 {
   transition:
     background 0.18s ease,
     border-color 0.18s ease,
-    box-shadow 0.18s ease;
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
 }
 
 .custom-button:hover {
@@ -158,8 +174,6 @@ h2 {
 
 /* ============================= */
 /* BUTTON CONTENT */
-/* ============================= */
-
 .button-content {
   display: flex;
   flex-direction: column;
@@ -169,8 +183,6 @@ h2 {
 
 /* ============================= */
 /* ICONS (SVG) */
-/* ============================= */
-
 .icon-container {
   width: 28px;
   height: 28px;
@@ -190,8 +202,6 @@ h2 {
 
 /* ============================= */
 /* COLOR SWATCH */
-/* ============================= */
-
 .color-swatch {
   width: 26px;
   height: 26px;
@@ -206,8 +216,6 @@ h2 {
 
 /* ============================= */
 /* LABEL */
-/* ============================= */
-
 .label {
   font-size: 0.72rem;
   font-weight: 500;
@@ -220,8 +228,6 @@ h2 {
 
 /* ============================= */
 /* MOBILE FIXES */
-/* ============================= */
-
 @media (max-width: 767px) {
   .custom-button {
     width: 75px;
@@ -242,7 +248,6 @@ h2 {
     font-size: 0.62rem;
   }
 
-  /* ✅ prevent top clipping */
   .row {
     padding-top: 0.6rem;
     padding-bottom: 0.6rem;
@@ -251,8 +256,6 @@ h2 {
 
 /* ============================= */
 /* DESKTOP */
-/* ============================= */
-
 @media (min-width: 768px) {
   .app {
     flex-direction: row;
@@ -286,8 +289,6 @@ h2 {
 
 /* ============================= */
 /* DARK MODE */
-/* ============================= */
-
 @media (prefers-color-scheme: dark) {
   :root {
     --white: #121212;
@@ -301,7 +302,6 @@ h2 {
     --accent-color: #ffffff;
   }
 
-  /* ✅ SVG turns white */
   .icon-container {
     color: rgba(255, 255, 255, 0.85);
   }

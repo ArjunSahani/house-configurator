@@ -27,7 +27,14 @@ export default function Home() {
   const [color, setColor] = useState("Beige");
   const [material, setMaterial] = useState("Farmhouse");
 
+  // Trigger smooth image transition
+  const [imgKey, setImgKey] = useState(0);
   const imageUrl = `/roofs/${roof}/${roof}-${color}-${material}.webp`;
+
+  useEffect(() => {
+    // Increment key to force React to re-render img for smooth animation
+    setImgKey((prev) => prev + 1);
+  }, [roof, color, material]);
 
   return (
     <main className="app">
@@ -35,12 +42,11 @@ export default function Home() {
       <div className="preview">
         <div className="image-container">
           <img
+            key={imgKey}
             src={imageUrl}
             alt="House Preview"
-            className="houseImage"
-            onError={(e) => {
-              e.currentTarget.src = "/placeholder.webp";
-            }}
+            className="houseImage smooth"
+            onError={(e) => (e.currentTarget.src = "/placeholder.webp")}
           />
         </div>
       </div>
@@ -81,7 +87,7 @@ export default function Home() {
               <IconButton
                 key={m.id}
                 icon={m.icon}
-                label={m.id}
+                label={m.label}
                 active={material === m.id}
                 onClick={() => setMaterial(m.id)}
               />
@@ -107,7 +113,7 @@ function Section({ title, children }) {
   );
 }
 
-/* ---------- ICON BUTTON (INLINE SVG FIX) ---------- */
+/* ---------- ICON BUTTON ---------- */
 
 function IconButton({ icon, label, active, ...props }) {
   const [svg, setSvg] = useState("");
