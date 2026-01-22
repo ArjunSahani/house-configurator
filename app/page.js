@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+
 
 export default function Home() {
   const ROOFS = [
@@ -17,24 +18,18 @@ export default function Home() {
   ];
 
   const MATERIALS = [
-    { id: "Farmhouse", icon: "/icons/farm.svg" },
-    { id: "Shingles", icon: "/icons/shingle.svg" },
-    { id: "Siding", icon: "/icons/siding.svg" },
-    { id: "Stucco", icon: "/icons/stucco.svg" }
+    { id: "Farmhouse", label: "Farmhouse", icon: "/icons/farm.svg" },
+    { id: "Shingles", label: "Shingles", icon: "/icons/shingle.svg" },
+    { id: "Siding", label: "Siding", icon: "/icons/siding.svg" },
+    { id: "Stucco", label: "Stucco", icon: "/icons/stucco.svg" }
   ];
 
   const [roof, setRoof] = useState("flat");
   const [color, setColor] = useState("Beige");
   const [material, setMaterial] = useState("Farmhouse");
+  const [loaded, setLoaded] = useState(false);
 
-  // Trigger smooth image transition
-  const [imgKey, setImgKey] = useState(0);
   const imageUrl = `/roofs/${roof}/${roof}-${color}-${material}.webp`;
-
-  useEffect(() => {
-    // Increment key to force React to re-render img for smooth animation
-    setImgKey((prev) => prev + 1);
-  }, [roof, color, material]);
 
   return (
     <main className="app">
@@ -42,10 +37,10 @@ export default function Home() {
       <div className="preview">
         <div className="image-container">
           <img
-            key={imgKey}
             src={imageUrl}
             alt="House Preview"
-            className="houseImage smooth"
+            className={`houseImage ${loaded ? "loaded" : ""}`}
+            onLoad={() => setLoaded(true)}
             onError={(e) => (e.currentTarget.src = "/placeholder.webp")}
           />
         </div>
@@ -63,7 +58,7 @@ export default function Home() {
                 icon={r.icon}
                 label={r.label}
                 active={roof === r.id}
-                onClick={() => setRoof(r.id)}
+                onClick={() => { setLoaded(false); setRoof(r.id); }}
               />
             ))}
           </Section>
@@ -76,7 +71,7 @@ export default function Home() {
                 label={c.id}
                 hex={c.hex}
                 active={color === c.id}
-                onClick={() => setColor(c.id)}
+                onClick={() => { setLoaded(false); setColor(c.id); }}
               />
             ))}
           </Section>
@@ -89,7 +84,7 @@ export default function Home() {
                 icon={m.icon}
                 label={m.label}
                 active={material === m.id}
-                onClick={() => setMaterial(m.id)}
+                onClick={() => { setLoaded(false); setMaterial(m.id); }}
               />
             ))}
           </Section>
@@ -100,10 +95,7 @@ export default function Home() {
   );
 }
 
-/* ===================== */
-/* HELPERS (SAME FILE)   */
-/* ===================== */
-
+/* ========== HELPERS ========== */
 function Section({ title, children }) {
   return (
     <section className="control-section">
@@ -112,8 +104,6 @@ function Section({ title, children }) {
     </section>
   );
 }
-
-/* ---------- ICON BUTTON ---------- */
 
 function IconButton({ icon, label, active, ...props }) {
   const [svg, setSvg] = useState("");
@@ -142,8 +132,6 @@ function IconButton({ icon, label, active, ...props }) {
   );
 }
 
-/* ---------- COLOR BUTTON ---------- */
-
 function ColorButton({ hex, label, active, ...props }) {
   return (
     <button
@@ -152,10 +140,7 @@ function ColorButton({ hex, label, active, ...props }) {
       {...props}
     >
       <div className="button-content">
-        <span
-          className="color-swatch"
-          style={{ backgroundColor: hex }}
-        />
+        <span className="color-swatch" style={{ backgroundColor: hex }} />
         <span className="label">{label}</span>
       </div>
     </button>

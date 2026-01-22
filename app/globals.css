@@ -75,9 +75,17 @@ body {
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
 
-  /* smooth transitions */
+  opacity: 0;
+  transform: scale(0.985);
   transition: opacity 0.35s ease, transform 0.35s ease, filter 0.35s ease;
 }
+
+.houseImage.loaded {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+}
+
 
 /* smooth animation class */
 .houseImage.smooth {
@@ -111,7 +119,6 @@ body {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
 h2 {
