@@ -1,111 +1,102 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const ROOFS = [
-    { id: "flat", label: "Flat", image: "/icons/1.png" },
-    { id: "gable", label: "Gable", image: "/icons/2.png" },
-    { id: "slope", label: "Slope", image: "/icons/3.png" }
+    { id: "flat", label: "Flat", icon: "/icons/flat.svg" },
+    { id: "gable", label: "Gable", icon: "/icons/gable.svg" },
+    { id: "slope", label: "Slope", icon: "/icons/slope.svg" }
   ];
-  
+
   const COLORS = [
     { id: "Beige", hex: "#F5F5DC" },
     { id: "Black", hex: "#2C2C2C" },
     { id: "Blue", hex: "#4169E1" },
     { id: "White", hex: "#FFFFFF" }
   ];
-  
+
   const MATERIALS = [
-    { id: "Farmhouse", image: "/icons/farm.png" },
-    { id: "Shingles", image: "/icons/shingle.png" },
-    { id: "Siding", image: "/icons/siding.png" },
-    { id: "Stucco", image: "/icons/stucco.png" }
+    { id: "Farmhouse", icon: "/icons/farm.svg" },
+    { id: "Shingles", icon: "/icons/shingle.svg" },
+    { id: "Siding", icon: "/icons/siding.svg" },
+    { id: "Stucco", icon: "/icons/stucco.svg" }
   ];
 
   const [roof, setRoof] = useState("flat");
   const [color, setColor] = useState("Beige");
   const [material, setMaterial] = useState("Farmhouse");
-  const [fade, setFade] = useState(true);
 
-  const imageUrl = `/roofs/${roof}/${capitalize(roof)}-${color}-${material}.jpg`;
-
-  // Trigger fade on change
-  useEffect(() => {
-    setFade(false);
-    const timer = setTimeout(() => setFade(true), 150);
-    return () => clearTimeout(timer);
-  }, [roof, color, material]);
+  const imageUrl = `/roofs/${roof}/${roof}-${color}-${material}.webp`;
 
   return (
-    <div className="app">
-      {/* PREVIEW - Take most space */}
+    <main className="app">
+      {/* PREVIEW */}
       <div className="preview">
         <div className="image-container">
           <img
             src={imageUrl}
-            className={`houseImage ${fade ? "fade-in" : "fade-out"}`}
-            alt={`${roof} roof with ${color} ${material} material`}
+            alt="House Preview"
+            className="houseImage"
             onError={(e) => {
-              e.target.src = "https://placehold.co/600x400/F6F6F6/999?text=Preview";
+              e.currentTarget.src = "/placeholder.webp";
             }}
-            loading="lazy"
           />
         </div>
       </div>
 
-      {/* CONTROLS - Compact at bottom */}
+      {/* CONTROLS */}
       <div className="controls">
         <div className="controls-container">
+
+          {/* ROOF */}
           <Section title="Roof Type">
             {ROOFS.map((r) => (
-              <Button 
-                key={r.id} 
-                active={roof === r.id} 
-                onClick={() => setRoof(r.id)}
-                type="roof"
-                image={r.image}
+              <IconButton
+                key={r.id}
+                icon={r.icon}
                 label={r.label}
-                fallbackIcon="🏠"
+                active={roof === r.id}
+                onClick={() => setRoof(r.id)}
               />
             ))}
           </Section>
 
+          {/* COLOR */}
           <Section title="Color">
             {COLORS.map((c) => (
-              <Button 
-                key={c.id} 
-                active={color === c.id} 
-                onClick={() => setColor(c.id)}
-                type="color"
-                colorHex={c.hex}
+              <ColorButton
+                key={c.id}
                 label={c.id}
+                hex={c.hex}
+                active={color === c.id}
+                onClick={() => setColor(c.id)}
               />
             ))}
           </Section>
 
+          {/* MATERIAL */}
           <Section title="Material">
             {MATERIALS.map((m) => (
-              <Button
+              <IconButton
                 key={m.id}
+                icon={m.icon}
+                label={m.id}
                 active={material === m.id}
                 onClick={() => setMaterial(m.id)}
-                type="material"
-                image={m.image}
-                label={m.id}
-                fallbackIcon="🧱"
               />
             ))}
           </Section>
+
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 
-function capitalize(word) {
-  return word.charAt(0).toUpperCase() + word.slice(1);
-}
+/* ===================== */
+/* HELPERS (SAME FILE)   */
+/* ===================== */
 
 function Section({ title, children }) {
   return (
@@ -116,53 +107,51 @@ function Section({ title, children }) {
   );
 }
 
-function Button({ active, type, image, colorHex, label, fallbackIcon, ...props }) {
-  const [imgError, setImgError] = useState(false);
+/* ---------- ICON BUTTON (INLINE SVG FIX) ---------- */
 
-  const getButtonContent = () => {
-    switch(type) {
-      case "color":
-        return (
-          <div className="button-content">
-            <div 
-              className="color-swatch" 
-              style={{ backgroundColor: colorHex }}
-            />
-            <span className="label">{label}</span>
-          </div>
-        );
-      case "roof":
-      case "material":
-        return (
-          <div className="button-content">
-            <div className="icon-container">
-              {!imgError && image ? (
-                <img 
-                  src={image} 
-                  alt={label}
-                  className="option-image"
-                  onError={() => setImgError(true)}
-                  loading="lazy"
-                />
-              ) : (
-                <span className="fallback-icon">{fallbackIcon}</span>
-              )}
-            </div>
-            <span className="label">{label}</span>
-          </div>
-        );
-      default:
-        return label;
-    }
-  };
+function IconButton({ icon, label, active, ...props }) {
+  const [svg, setSvg] = useState("");
+
+  useEffect(() => {
+    fetch(icon)
+      .then((res) => res.text())
+      .then((data) => setSvg(data))
+      .catch(() => setSvg(""));
+  }, [icon]);
 
   return (
-    <button 
-      className={`custom-button ${active ? "active" : ""}`} 
+    <button
+      className={`custom-button ${active ? "active" : ""}`}
       aria-pressed={active}
       {...props}
     >
-      {getButtonContent()}
+      <div className="button-content">
+        <div
+          className="icon-container"
+          dangerouslySetInnerHTML={{ __html: svg }}
+        />
+        <span className="label">{label}</span>
+      </div>
+    </button>
+  );
+}
+
+/* ---------- COLOR BUTTON ---------- */
+
+function ColorButton({ hex, label, active, ...props }) {
+  return (
+    <button
+      className={`custom-button ${active ? "active" : ""}`}
+      aria-pressed={active}
+      {...props}
+    >
+      <div className="button-content">
+        <span
+          className="color-swatch"
+          style={{ backgroundColor: hex }}
+        />
+        <span className="label">{label}</span>
+      </div>
     </button>
   );
 }
