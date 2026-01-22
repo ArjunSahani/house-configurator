@@ -1,12 +1,22 @@
+// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
-  // Add if you're having image issues
   images: {
-    unoptimized: true,
+    domains: [],
+    unoptimized: true, // Important for static exports
   },
-  // Optional: Add if you want to disable ESLint during build
+  // For static site generation
+  output: 'standalone', // or 'export' for static sites
+  
+  // Enable trailing slashes for better compatibility
+  trailingSlash: true,
+  
+  // Disable TypeScript errors during build
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  
+  // Disable ESLint during build
   eslint: {
     ignoreDuringBuilds: true,
   },

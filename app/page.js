@@ -27,15 +27,28 @@ export default function Home() {
   const [color, setColor] = useState("Beige");
   const [material, setMaterial] = useState("Farmhouse");
   const [currentImage, setCurrentImage] = useState("/placeholder.webp");
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const timeoutRef = useRef(null);
 
-  // Preload images for current selection
+  // Build image URL - IMPORTANT: Match your actual file names
+  const getImageUrl = () => {
+    // Try different formats based on how you named your files
+    const baseUrl = `/roofs/${roof}`;
+    const fileName = `${roof}-${color}-${material}.webp`;
+    
+    // Common variations to try:
+    // 1. Original: flat-Beige-Farmhouse.webp
+    // 2. Lowercase: flat-beige-farmhouse.webp
+    // 3. Without dashes: flatBeigeFarmhouse.webp
+    
+    return `${baseUrl}/${fileName}`;
+  };
+
   useEffect(() => {
     // Start fade out
     setIsVisible(false);
     
-    const imageUrl = `/roofs/${roof}/${roof}-${color}-${material}.webp`;
+    const imageUrl = getImageUrl();
     
     // Clear any existing timeout
     if (timeoutRef.current) {
@@ -47,7 +60,7 @@ export default function Home() {
     img.src = imageUrl;
     
     img.onload = () => {
-      // Small delay for smooth transition
+      console.log("Image loaded successfully:", imageUrl);
       timeoutRef.current = setTimeout(() => {
         setCurrentImage(imageUrl);
         setIsVisible(true);
@@ -56,8 +69,24 @@ export default function Home() {
     
     img.onerror = () => {
       console.error("Failed to load image:", imageUrl);
-      setCurrentImage("/placeholder.webp");
-      setIsVisible(true);
+      
+      // Try alternative naming if fails
+      const altImageUrl = `/roofs/${roof}/${roof}-${color.toLowerCase()}-${material.toLowerCase()}.webp`;
+      console.log("Trying alternative:", altImageUrl);
+      
+      const altImg = new Image();
+      altImg.src = altImageUrl;
+      
+      altImg.onload = () => {
+        setCurrentImage(altImageUrl);
+        setIsVisible(true);
+      };
+      
+      altImg.onerror = () => {
+        // Final fallback
+        setCurrentImage("/placeholder.webp");
+        setIsVisible(true);
+      };
     };
     
     // Cleanup
@@ -68,15 +97,6 @@ export default function Home() {
     };
   }, [roof, color, material]);
 
-  // Set initial image visible
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <main className="app">
       {/* PREVIEW */}
@@ -86,6 +106,11 @@ export default function Home() {
             src={currentImage}
             alt={`${roof} roof, ${color} color, ${material} material house`}
             className={`houseImage ${isVisible ? "loaded" : ""}`}
+            onError={(e) => {
+              console.error("Image error in render:", e.currentTarget.src);
+              e.currentTarget.src = "/placeholder.webp";
+              setIsVisible(true);
+            }}
           />
         </div>
       </div>
@@ -156,7 +181,10 @@ function IconButton({ icon, label, active, ...props }) {
     fetch(icon)
       .then((res) => res.text())
       .then((data) => setSvg(data))
-      .catch(() => setSvg(""));
+      .catch((err) => {
+        console.error("Failed to load icon:", icon, err);
+        setSvg("");
+      });
   }, [icon]);
 
   return (
