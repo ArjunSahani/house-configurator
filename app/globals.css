@@ -1,5 +1,5 @@
 /* ============================= */
-/* MINIMAL PREMIUM UI */
+/* MINIMAL PREMIUM UI WITH DARK-MODE ICONS */
 /* ============================= */
 
 :root {
@@ -41,8 +41,6 @@ body {
 
 /* ============================= */
 /* PREVIEW */
-/* ============================= */
-
 .preview {
   flex: 0 0 55vh;
   display: flex;
@@ -77,23 +75,10 @@ body {
   object-fit: contain;
   background: var(--surface);
   border-radius: 10px;
-  opacity: 0;
-  filter: blur(8px);
-  transform: scale(0.98);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: opacity, transform, filter;
-}
-
-.houseImage.loaded {
-  opacity: 1;
-  transform: scale(1);
-  filter: blur(0);
 }
 
 /* ============================= */
 /* CONTROLS */
-/* ============================= */
-
 .controls {
   flex: 1;
   padding: 1.5rem 1rem 2rem;
@@ -123,7 +108,7 @@ h2 {
   display: flex;
   gap: 0.6rem;
   overflow-x: auto;
-  padding: 0.6rem 0.25rem; /* safe touch padding */
+  padding: 0.6rem 0.25rem;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
@@ -184,22 +169,16 @@ h2 {
 }
 
 /* ============================= */
-/* ICONS (SVG) */
+/* ICONS (SVG) - FIXED FOR DARK MODE */
 .icon-container {
   width: 28px;
   height: 28px;
-  color: #9a9a9a;
+  /* Make SVG icons adapt to dark mode */
+  filter: brightness(0) invert(0.6); /* Gray in light mode */
 }
 
 .custom-button.active .icon-container {
-  color: var(--accent-color);
-}
-
-.icon-container svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  fill: currentColor;
+  filter: brightness(0) invert(0.1); /* Darker gray when active in light mode */
 }
 
 /* ============================= */
@@ -290,7 +269,7 @@ h2 {
 }
 
 /* ============================= */
-/* DARK MODE */
+/* DARK MODE - WITH FIXED ICONS */
 @media (prefers-color-scheme: dark) {
   :root {
     --white: #121212;
@@ -304,16 +283,22 @@ h2 {
     --accent-color: #ffffff;
   }
 
-  .icon-container {
-    color: rgba(255, 255, 255, 0.85);
-  }
-
-  .custom-button.active .icon-container {
-    color: #ffffff;
-  }
-
   .houseImage {
     background: var(--surface);
     box-shadow: none;
+  }
+
+  /* FIX: Make SVG icons white in dark mode */
+  .icon-container {
+    filter: brightness(0) invert(1); /* White in dark mode */
+  }
+
+  .custom-button.active .icon-container {
+    filter: brightness(0) invert(1) drop-shadow(0 0 1px rgba(255, 255, 255, 0.5));
+  }
+
+  /* Adjust color swatch border for dark mode */
+  .color-swatch {
+    border: 1px solid rgba(255, 255, 255, 0.15);
   }
 }

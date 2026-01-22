@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 
 export default function Home() {
   const ROOFS = [
@@ -26,61 +26,27 @@ export default function Home() {
   const [roof, setRoof] = useState("flat");
   const [color, setColor] = useState("beige");
   const [material, setMaterial] = useState("farmhouse");
-  const [currentImage, setCurrentImage] = useState("/placeholder.webp");
-  const [isVisible, setIsVisible] = useState(true);
-
-  const timeoutRef = useRef(null);
 
   const getImageUrl = () =>
     `/roofs/${roof}/${roof}-${color}-${material}.webp`;
 
-
-
-
-
-  useEffect(() => {
-    setIsVisible(false);
-
-    const imageUrl = getImageUrl();
-    const img = new Image();
-    img.src = imageUrl;
-
-    img.onload = () => {
-      timeoutRef.current = setTimeout(() => {
-        setCurrentImage(imageUrl);
-        setIsVisible(true);
-      }, 40);
-    };
-
-    img.onerror = () => {
-      setCurrentImage("/placeholder.webp");
-      setIsVisible(true);
-    };
-
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, [roof, color, material]);
-
   return (
     <main className="app">
+      {/* PREVIEW */}
       <div className="preview">
         <div className="image-container">
           <img
-            src={currentImage}
+            src={getImageUrl()}
             alt={`${roof} roof, ${color} color, ${material} material house`}
-            className={`houseImage ${isVisible ? "loaded" : ""}`}
-            onError={(e) => {
-              e.currentTarget.src = "/placeholder.webp";
-              setIsVisible(true);
-            }}
+            className="houseImage"
+            onError={(e) => (e.currentTarget.src = "/placeholder.webp")}
           />
         </div>
       </div>
 
+      {/* CONTROLS */}
       <div className="controls">
         <div className="controls-container">
-
           <Section title="Roof Type">
             {ROOFS.map((r) => (
               <IconButton
@@ -116,7 +82,6 @@ export default function Home() {
               />
             ))}
           </Section>
-
         </div>
       </div>
     </main>
