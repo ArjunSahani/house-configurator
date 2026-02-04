@@ -31,68 +31,70 @@ export default function Home() {
     `/roofs/${roof}/${roof}-${color}-${material}.webp`;
 
   return (
-    <main className="app">
-      {/* PREVIEW */}
-      <div className="preview">
-        <div className="image-container">
-          <img
-            src={getImageUrl()}
-            alt={`${roof} roof, ${color} color, ${material} material house`}
-            className="houseImage"
-            onError={(e) => (e.currentTarget.src = "/placeholder.webp")}
-          />
+    /* Wrap the entire thing in the window-wrapper for the padding effect */
+    <div className="window-wrapper">
+      <main className="app">
+        {/* PREVIEW */}
+        <div className="preview">
+          <div className="image-container">
+            <img
+              src={getImageUrl()}
+              alt={`${roof} roof, ${color} color, ${material} material house`}
+              className="houseImage"
+              onError={(e) => (e.currentTarget.src = "/placeholder.webp")}
+            />
+          </div>
         </div>
-      </div>
 
-      {/* CONTROLS */}
-      <div className="controls">
-        <div className="controls-container">
-          <Section title="Roof Type">
-            {ROOFS.map((r) => (
-              <IconButton
-                key={r.id}
-                icon={r.icon}
-                label={r.label}
-                active={roof === r.id}
-                onClick={() => setRoof(r.id)}
-              />
-            ))}
-          </Section>
+        {/* CONTROLS */}
+        <div className="controls">
+          <div className="controls-container">
+            <Section title="Roof Type">
+              {ROOFS.map((r) => (
+                <IconButton
+                  key={r.id}
+                  icon={r.icon}
+                  label={r.label}
+                  active={roof === r.id}
+                  onClick={() => setRoof(r.id)}
+                />
+              ))}
+            </Section>
 
-          <Section title="Color">
-            {COLORS.map((c) => (
-              <ColorButton
-                key={c.id}
-                label={c.label}
-                hex={c.hex}
-                active={color === c.id}
-                onClick={() => setColor(c.id)}
-              />
-            ))}
-          </Section>
+            <Section title="Color">
+              {COLORS.map((c) => (
+                <ColorButton
+                  key={c.id}
+                  label={c.label}
+                  hex={c.hex}
+                  active={color === c.id}
+                  onClick={() => setColor(c.id)}
+                />
+              ))}
+            </Section>
 
-          <Section title="Material">
-            {MATERIALS.map((m) => (
-              <IconButton
-                key={m.id}
-                icon={m.icon}
-                label={m.label}
-                active={material === m.id}
-                onClick={() => setMaterial(m.id)}
-              />
-            ))}
-          </Section>
+            <Section title="Material">
+              {MATERIALS.map((m) => (
+                <IconButton
+                  key={m.id}
+                  icon={m.icon}
+                  label={m.label}
+                  active={material === m.id}
+                  onClick={() => setMaterial(m.id)}
+                />
+              ))}
+            </Section>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
 
-/* ================= HELPERS ================= */
-
+/* Helper components remain the same as your provided code */
 function Section({ title, children }) {
   return (
-    <section className="control-section">
+    <section className="control-section" style={{ marginBottom: "1.5rem" }}>
       <h2>{title}</h2>
       <div className="row">{children}</div>
     </section>
@@ -101,13 +103,9 @@ function Section({ title, children }) {
 
 function IconButton({ icon, label, active, ...props }) {
   return (
-    <button
-      className={`custom-button ${active ? "active" : ""}`}
-      aria-pressed={active}
-      {...props}
-    >
+    <button className={`custom-button ${active ? "active" : ""}`} {...props}>
       <div className="button-content">
-        <img src={icon} alt="" className="icon-container" aria-hidden />
+        <img src={icon} alt="" className="icon-container" />
         <span className="label">{label}</span>
       </div>
     </button>
@@ -116,11 +114,7 @@ function IconButton({ icon, label, active, ...props }) {
 
 function ColorButton({ hex, label, active, ...props }) {
   return (
-    <button
-      className={`custom-button ${active ? "active" : ""}`}
-      aria-pressed={active}
-      {...props}
-    >
+    <button className={`custom-button ${active ? "active" : ""}`} {...props}>
       <div className="button-content">
         <span className="color-swatch" style={{ backgroundColor: hex }} />
         <span className="label">{label}</span>
