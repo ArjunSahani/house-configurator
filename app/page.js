@@ -94,9 +94,9 @@ export default function Home() {
 /* Helper components remain the same as your provided code */
 function Section({ title, children }) {
   return (
-    <section className="control-section" style={{ marginBottom: "1.5rem" }}>
+    <section className="control-section">
       <h2>{title}</h2>
-      <div className="row">{children}</div>
+      <div className="grid-layout">{children}</div>
     </section>
   );
 }

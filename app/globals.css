@@ -9,64 +9,57 @@
   --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.08);
 }
 
-/* Force light background on body */
 body {
   margin: 0;
-  background-color: #eeeeee; /* Grey backdrop */
+  background-color: #eeeeee; 
   font-family: -apple-system, sans-serif;
+  overflow: hidden; /* Lock the whole screen */
 }
 
 /* ============================= */
-/* THE HUGE PADDING WRAPPER */
+/* THE WINDOW WRAPPER */
 /* ============================= */
 .window-wrapper {
-  min-height: 80vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px; /* Mobile padding */
-}
-
-@media (min-width: 1024px) {
-  .window-wrapper {
-    padding: 60px 10%; /* Massive desktop padding */
-  }
+  padding: 15px;
 }
 
 /* ============================= */
-/* THE MAIN APP CONTAINER */
+/* THE MAIN APP (LOCKED 70VH) */
 /* ============================= */
 .app {
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: 1300px;
+  height: 70vh; /* Strictly compressed */
   background: var(--white);
-  border-radius: 24px;
+  border-radius: 20px;
   overflow: hidden;
   box-shadow: var(--shadow-md);
   border: 1px solid var(--border-color);
 }
 
-/* PREVIEW */
+/* PREVIEW - Flexible but shrinks */
 .preview {
-  flex: 0 0 45vh;
-  padding: 1.5rem;
+  flex: 1; 
+  padding: 1rem;
   background: linear-gradient(180deg, var(--white) 0%, var(--surface) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 0; /* Important for flex-shrink */
 }
 
 .image-container {
   width: 100%;
   height: 100%;
-  background: var(--surface);
-  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
 }
 
 .houseImage {
@@ -75,42 +68,43 @@ body {
   object-fit: contain;
 }
 
-/* CONTROLS */
+/* CONTROLS - FIXED NO SCROLL */
 .controls {
-  flex: 1;
-  padding: 2rem 1.5rem;
+  flex: 0 0 auto; /* Takes only what it needs */
+  padding: 1rem;
   background: var(--white);
-  overflow-y: auto;
+  border-top: 1px solid var(--border-color);
+  /* overflow: hidden; Removed to ensure we see the buttons */
+}
+
+.control-section {
+  margin-bottom: 0.75rem; /* Tightened for mobile */
 }
 
 h2 {
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 0.55rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.5px;
   color: var(--text-secondary);
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.4rem;
 }
 
-.row {
-  display: flex;
-  gap: 0.6rem;
-  overflow-x: auto;
-  padding-bottom: 0.5rem;
-  scrollbar-width: none;
+/* THE GRID - NO SLIDING */
+.grid-layout {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 across to save vertical space */
+  gap: 6px;
 }
-.row::-webkit-scrollbar { display: none; }
 
-/* BUTTONS */
+/* BUTTONS - MINI VERSION FOR MOBILE */
 .custom-button {
-  width: 90px;
-  height: 55px;
-  flex-shrink: 0;
+  width: 100%;
+  height: 48px; /* Compact height */
   background: var(--surface-soft);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -119,64 +113,69 @@ h2 {
 .custom-button.active {
   background: var(--white);
   border-color: var(--accent-color);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
 }
 
 .button-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 
 .icon-container {
-  width: 24px;
-  height: 24px;
-  filter: brightness(0) opacity(0.4); /* Locked light gray */
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) opacity(0.5);
 }
 
 .custom-button.active .icon-container {
-  filter: brightness(0) opacity(1); /* Locked black */
+  filter: brightness(0) opacity(1);
 }
 
 .color-swatch {
-  width: 20px;
-  height: 20px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  border: 1px solid rgba(0,0,0,0.1);
 }
 
 .label {
-  font-size: 0.65rem;
+  font-size: 0.5rem;
   font-weight: 600;
   color: var(--text-secondary);
+  white-space: nowrap;
 }
 
-/* DESKTOP RE-LAYOUT */
+/* ============================= */
+/* DESKTOP ADJUSTMENTS */
+/* ============================= */
 @media (min-width: 768px) {
   .app {
     flex-direction: row;
-    height: 75vh; /* Prevents the app from filling vertical screen */
+    height: 70vh; 
   }
 
   .preview {
     flex: 1;
     border-bottom: none;
     border-right: 1px solid var(--border-color);
+    padding: 2rem;
   }
 
   .controls {
-    flex: 0 0 320px;
+    flex: 0 0 300px;
+    padding: 2rem 1.25rem;
   }
 
-  .row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    overflow: visible;
+  .grid-layout {
+    grid-template-columns: 1fr 1fr; /* 2 across on desktop */
+    gap: 10px;
   }
 
   .custom-button {
-    width: 100%;
-    height: 55px;
+    height: 60px;
+  }
+
+  .label {
+    font-size: 0.6rem;
   }
 }
