@@ -73,7 +73,7 @@ export default function Home() {
               ))}
             </Section>
 
-            <Section title="Material">
+            <Section title="Body Panels">
               {MATERIALS.map((m) => (
                 <IconButton
                   key={m.id}

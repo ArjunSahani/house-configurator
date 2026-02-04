@@ -151,7 +151,7 @@ h2 {
 @media (min-width: 768px) {
   .app {
     flex-direction: row;
-    height: 70vh; 
+    height: 85vh; 
   }
 
   .preview {
